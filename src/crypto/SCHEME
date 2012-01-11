@@ -1,0 +1,42 @@
+Field is Fp, p=2^255-19
+Curve is twisted Edwards curve -x^2 + y^2 = 1 + dx^2y^2
+  with d = -(121665/121666) = 37095705934669439343138083508754565189542113879843219016388785533085940283555
+  base point: (15112221349535400772501151409588531511454012693041857206046113283949847762202,46316835694926478169428394003475163141307993866256225615783033603165251855960)
+
+The specification below does not include implicit conversions from/to group scalars (modulo m = 2^252 +  27742317777372353535851937790883648493 = 7237005577332262213973186563042994240857116359379907606001950938285454250989),
+or packing/unpacking of group elements.
+
+Private keys are generated as random 256-bit (or actually, any length) byte sequences, called sk.
+
+Public keys are calculated from them as pk(sk) = { let [lh,rh]=split(Sha512(sk)) in fix(lh)*G }, with G the generator point, and
+fix(x) a function that erases 4 bits from x, see below.
+
+Signatures on messages m are calculated using:
+
+sig(m,sk) =
+  let [lh,rh]=split(Sha512(sk))
+      a = fix(lh)
+      k = Sha512(rh | m)
+      R = k*G
+      h = Sha512(R | m)
+      s = h*k + a
+      in (R,s)
+
+Key recovery can be performed using:
+
+rec(m,R,s) =
+  let h = Sha512(R | m)
+      A = h*(-R)+s*G
+      in A
+
+Signature verification is similar:
+
+ver(m,R,s,A) =
+  let h = Sha512(R | m)
+      ok = h*R+A == s*G
+
+The helper routine fix does:
+  fix(x) =
+    x[0] &= 248
+    x[31] &= 127
+    x[31] |= 64
