@@ -3,15 +3,12 @@
    to it are in public domain. -Pekka */
 /* LibTomCrypt, modular cryptographic library -- Tom St Denis */
 
+#define _SHA512_C_ 1
+
 #include <stdint.h>
 #include <string.h>
 
-typedef struct {
-  uint64_t length;
-  uint64_t state[8];
-  uint32_t curlen;
-  unsigned char buf[128];
-} sha512_state;
+#include "sha512.h"
 
 #define CONST64(n) n ## ULL
 #define TRUE 1
@@ -136,7 +133,7 @@ void static sha512_transform(uint64_t *state, unsigned char *buf)
   }
 }
 
-int static sha512_init(sha512_state * md)
+int sha512_init(sha512_state * md)
 {
   md->curlen = 0;
   md->length = 0;
@@ -155,7 +152,7 @@ int static sha512_init(sha512_state * md)
 #define MIN(x,y) ((x)<(y)?(x):(y))
 #endif
 
-int static sha512_process(sha512_state * md, const unsigned char *in,
+int sha512_process(sha512_state * md, const unsigned char *in,
                    unsigned long inlen)
 {
   unsigned long n;
@@ -186,7 +183,7 @@ int static sha512_process(sha512_state * md, const unsigned char *in,
   return TRUE;
 }
 
-int static sha512_done(sha512_state * md, unsigned char *out)
+int sha512_done(sha512_state * md, unsigned char *out)
 {
   int i;
 
