@@ -64,7 +64,8 @@ int ed25519_recover(ed25519_public_key *pubkey, const ed25519_signature *sign, u
   sc25519 scH;
   sc25519_from64bytes(&scH,h);
   ge25519 geA;
-  ge25519_double_scalarmult_vartime(&geA, &geNR, &scH, &ge25519_base, &scS);
+//  ge25519_double_scalarmult_vartime(&geA, &geNR, &scH, &ge25519_base, &scS);
+  ge25519_double_scalarmult_vartime(&geA, &geNR, &scH, &scS);
   ge25519_pack(pubkey->pk, &geA);
   return 1;
 }

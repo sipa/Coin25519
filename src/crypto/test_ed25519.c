@@ -22,7 +22,7 @@ int main(void) {
     ed25519_signature sign;
     ed25519_sign(&sk,&sign,msg,64);
     ed25519_public_key pk2;
-    for (int j=0; j<1000; j++)
+    for (int j=0; j<100000; j++)
       ed25519_recover(&pk2,&sign,msg,64);
     if (memcmp(&pk,&pk2,32) != 0) printf("Failure!!!\n");
   }
