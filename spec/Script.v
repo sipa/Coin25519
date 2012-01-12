@@ -56,7 +56,11 @@ Inductive Expr : ExprType -> Set :=
 | plus : forall bound : N, Expr (Int bound) -> Expr (Int bound) -> Expr (Int bound)
 | mult : forall bound : N, Expr (Int bound) -> Expr (Int bound) -> Expr (Int bound)
 | eq : forall ty, Expr ty -> Expr ty -> Expr Bool
-| leq : forall ty, Expr ty -> Expr ty -> Expr Bool
+| leq : forall bound, Expr (Int bound) -> Expr (Int bound) -> Expr Bool
+| ltn : forall bound, Expr (Int bound) -> Expr (Int bound) -> Expr Bool
+| and : Expr Bool -> Expr Bool -> Expr Bool
+| or : Expr Bool -> Expr Bool -> Expr Bool
+| not : Expr Bool -> Expr Bool
 | branch : forall ty, Expr Bool -> Expr ty -> Expr ty -> Expr ty
 | sha256 : forall ty, Expr ty -> Expr (Int (2^256))
 | sha512 : forall ty, Expr ty -> Expr (Int (2^512))
@@ -78,6 +82,10 @@ match e with
 | mult _ e1 e2 => app (ExprContext _ e1) (ExprContext _ e2)
 | eq _ e1 e2 => app (ExprContext _ e1) (ExprContext _ e2)
 | leq _ e1 e2 => app (ExprContext _ e1) (ExprContext _ e2)
+| ltn _ e1 e2 => app (ExprContext _ e1) (ExprContext _ e2)
+| and e1 e2 => app (ExprContext _ e1) (ExprContext _ e2)
+| or e1 e2 => app (ExprContext _ e1) (ExprContext _ e2)
+| not e1 => ExprContext _ e1
 | branch _ e1 e2 e3 => app (ExprContext _ e1) (app (ExprContext _ e2) (ExprContext _ e3))
 | sha256 _ e1 => ExprContext _ e1
 | sha512 _ e1 => ExprContext _ e1
