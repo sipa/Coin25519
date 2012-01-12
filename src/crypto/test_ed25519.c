@@ -12,7 +12,7 @@ void randbytes(void* data, int len) {
 }
 
 int main(void) {
-  for (int i=0; i<100; i++) {
+  for (int i=0; i<1000000; i++) {
     ed25519_secret_key sk;
     randbytes(&sk, 32);
     ed25519_public_key pk;
@@ -21,10 +21,10 @@ int main(void) {
     randbytes(msg,64);
     ed25519_signature sign;
     ed25519_sign(&sk,&sign,msg,64);
-    ed25519_public_key pk2;
-    for (int j=0; j<100; j++)
-      ed25519_recover(&pk2,&sign,msg,64);
-    if (memcmp(&pk,&pk2,32) != 0) printf("Failure!!!\n");
+    int fail = 0;
+    for (int j=0; j<1; j++)
+      fail += !ed25519_verify(&pk,&sign,msg,64);
+    if (fail != 0) printf("Failure!!!\n");
   }
   return 0;
 }
