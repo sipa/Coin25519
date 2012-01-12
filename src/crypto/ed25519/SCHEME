@@ -1,3 +1,6 @@
+Curve25519 EdDSA using s=h*k+a
+==============================
+
 Field is Fp, p=2^255-19
 Curve is twisted Edwards curve -x^2 + y^2 = 1 + dx^2y^2
   with d = -(121665/121666) = 37095705934669439343138083508754565189542113879843219016388785533085940283555
@@ -8,7 +11,7 @@ or packing/unpacking of group elements.
 
 Private keys are generated as random 256-bit (or actually, any length) byte sequences, called sk.
 
-Public keys are calculated from them as pk(sk) = { let [lh,rh]=split(Sha512(sk)) in fix(lh)*G }, with G the generator point, and
+Public keys are calculated from them as pk(sk) = { let [lh,rh]=split(Sha512(sk)) in fix(lh)*G }, with G the base point, and
 fix(x) a function that erases 4 bits from x, see below.
 
 Signatures on messages m are calculated using:

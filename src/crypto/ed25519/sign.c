@@ -1,8 +1,8 @@
 #include <string.h>
 
-#include "ed25519/ge25519.h"
-#include "sha512.h"
-#include "ed25519.h"
+#include "lib/ge25519.h"
+#include "../sha512.h"
+#include "sign.h"
 
 int ed25519_derive_public_key(const ed25519_secret_key *seckey, ed25519_public_key *pubkey) {
   unsigned char lhrh[64];
