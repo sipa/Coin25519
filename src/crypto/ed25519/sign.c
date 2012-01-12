@@ -4,7 +4,7 @@
 #include "../sha512.h"
 #include "sign.h"
 
-int ed25519_derive_public_key(const ed25519_secret_key *seckey, ed25519_public_key *pubkey) {
+int ed25519_extract(const ed25519_secret_key *seckey, ed25519_public_key *pubkey) {
   unsigned char lhrh[64];
   sha512(&seckey->sk,sizeof(seckey->sk),lhrh);
   lhrh[0] &= 248;
