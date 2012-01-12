@@ -1,4 +1,4 @@
-#include "ed25519.h"
+#include "sign.h"
 
 #include <stdlib.h>
 #include <string.h>

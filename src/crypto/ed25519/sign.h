@@ -1,5 +1,5 @@
-#ifndef _ED25519_H_
-#define _ED25519_H_ 1
+#ifndef _ED25519_SIGN_H_
+#define _ED25519_SIGN_H_ 1
 
 typedef struct {
   unsigned char sk[32];
