@@ -46,20 +46,12 @@ let (stv, stg) := st in
 
 Fixpoint lens n (k:Bvector n) (ot: option (PatriciaTrie n)) : storeType n  :=
 match ot with
-| None => (None, fun ov =>
-  match ov with
-  | None => None
-  | Some v => Some (singleton _ k v)
-  end)
+| None => (None, option_map (singleton _ k))
 | Some t => 
   match k in vector _ n return PatriciaTrie n -> storeType n with
   | Vnil => fun t =>
     match t in PatriciaTrie m return if m then storeType m else unit with
-    | Tip v => (Some v, fun ov =>
-      match ov with
-      | None => None
-      | Some v => Some (Tip v)
-      end)
+    | Tip v => (Some v, option_map Tip)
     | _ => tt
     end
   | Vcons b n k' => fun t =>
