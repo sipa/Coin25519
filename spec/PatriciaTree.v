@@ -44,16 +44,16 @@ Definition map X Y (f : X -> Y) (st : option A * (option A -> X)) : option A * (
 let (stv, stg) := st in
 (stv, fun oa => f (stg oa)).
 
-Fixpoint lens n (k:Bvector n) : option (PatriciaTrie n) -> storeType n  :=
-match k in vector _ n return option (PatriciaTrie n) -> storeType n with
-| Vnil => fun ot =>
-  match ot with 
-  | None => (None, fun ov =>
-    match ov with
-    | None => None
-    | Some v => Some (Tip v)
-    end)
-  | Some t =>
+Fixpoint lens n (k:Bvector n) (ot: option (PatriciaTrie n)) : storeType n  :=
+match ot with
+| None => (None, fun ov =>
+  match ov with
+  | None => None
+  | Some v => Some (singleton _ k v)
+  end)
+| Some t => 
+  match k in vector _ n return PatriciaTrie n -> storeType n with
+  | Vnil => fun t =>
     match t in PatriciaTrie m return if m then storeType m else unit with
     | Tip v => (Some v, fun ov =>
       match ov with
@@ -62,15 +62,7 @@ match k in vector _ n return option (PatriciaTrie n) -> storeType n with
       end)
     | _ => tt
     end
-  end
-| Vcons b n k' => fun ot =>
-  match ot with
-  | None => (None, fun ov =>
-    match ov with
-    | None => None
-    | Some v => Some (singleton _ (Vcons _ b n k') v)
-    end)
-  | Some t =>
+  | Vcons b n k' => fun t =>
     match t in PatriciaTrie m return match m with O => unit | S m' => Bvector m' -> (PatriciaTrie m' -> storeType m') -> storeType (S m') end with
     | Tip _ => tt
     | Extend b0 m t0 => fun k' rec =>
@@ -92,6 +84,6 @@ match k in vector _ n return option (PatriciaTrie n) -> storeType n with
       then map _ _ (option_map (Branch m t0)) (rec t1)
       else map _ _ (option_map (fun x => Branch m x t1)) (rec t0)
     end k' (fun t => lens n k' (Some t))
-  end
+  end t
 end.
 
