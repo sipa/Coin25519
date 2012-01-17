@@ -73,8 +73,22 @@ match ot with
       end
     | Branch m t0 t1 => fun _ rec =>
       if b
-      then map _ _ (option_map (Branch m t0)) (rec t1)
-      else map _ _ (option_map (fun x => Branch m x t1)) (rec t0)
+      then
+        map _ _ 
+        (fun ot1' => Some
+           match ot1' with
+           | None => Extend false m t0
+           | Some t1' => Branch m t0 t1'
+           end) 
+        (rec t1)
+      else
+        map _ _ 
+        (fun ot0' => Some
+           match ot0' with
+           | None => Extend true m t1
+           | Some t0' => Branch m t0' t1
+           end) 
+        (rec t0)
     end k' (fun t => lens n k' (Some t))
   end t
 end.
