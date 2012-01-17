@@ -87,3 +87,6 @@ match ot with
   end t
 end.
 
+(* Note: the merkle hashing of the patricia tree should hash the keys with the values.
+         In the case that they key is the hash of the value, then the key will be the hash of the value, so need not be included 
+*)
