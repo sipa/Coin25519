@@ -37,7 +37,7 @@ match k with
 | Vnil => fun t =>
   match t with
   | Tip v => Some v
-  | _ => tt
+  | _ => @id
   end
 | Vcons b n k' => fun t =>
   match t with
@@ -48,7 +48,6 @@ match k with
     end
   | Branch m t0 t1 => fun rec =>
     if b then rec t1 else rec t0
-  | _ => tt
   end (fun t => getR k' t)
 end.
 
@@ -63,7 +62,7 @@ match k with
 | Vnil => fun t =>
   match t with
   | Tip v => option_map Tip
-  | _ => tt
+  | _ => @id
   end
 | Vcons b n k' => fun t =>
   match t with
@@ -95,7 +94,6 @@ match k with
         | None => Arm true t1
         | Some t0' => Branch t0' t1
         end
-  | _ => tt
   end k' (fun t => setR k' t)
 end.
 
@@ -130,10 +128,18 @@ case b;
  reflexivity.
 Qed.
 
-(*
+Lemma getR_singletonR : forall n (k : Bvector n) nv, getR k (singletonR k nv) = Some nv.
+Proof.
+intros n k nv.
+induction k as [|b m k].
+ reflexivity.
+case b; auto.
+Qed.
+
 Lemma lens2 : forall n (k : Bvector n) ot nv, get k (set k ot nv) = nv.
 Proof.
-intros n k [t|] nv; simpl.
+intros n k [t|] nv; simpl;
+ [|destruct nv as [nv|]; simpl; auto using getR_singletonR].
 change t with (eq_rec n PatriciaTrieR t n (eq_refl n)).
 generalize (eq_refl n).
 set (a:=n).
@@ -141,72 +147,33 @@ unfold a at 1 5.
 revert t.
 induction k as [|b m k].
  intros t;dependent inversion t;
-  (apply K_dec_set;[intros x y; decide equality|]);
-  destruct nv; reflexivity.
+ (apply K_dec_set;[intros x y; decide equality|]);
+ destruct nv; reflexivity.
 intros t;dependent inversion t;
  (apply K_dec_set;[intros x y; decide equality|]);
- simpl (eq_rec _ _ _ _ _).
-pose (IHkp := fun p => IHk p (refl_equal m)).
-simpl in IHkp.
-simpl.
-case b; case b0;
-destruct nv as [nv|]; simpl; try reflexivity.
-apply (fun x => eq_trans x (IHkp p)).
-case (setR _ _ _); reflexivity.
-apply (fun x => eq_trans x (IHkp p)).
-case (setR _ _ _); reflexivity.
-
-Focus 3.
-apply (fun x => eq_trans x (IHkp p)).
-case (setR _ _ _); reflexivity.
-
-Focus 3.
-apply (fun x => eq_trans x (IHkp p)).
-case (setR _ _ _); reflexivity.
-
-Focus 3.
-pose (IHkp := fun p => IHk p (refl_equal m)).
+ simpl (eq_rec _ _ _ _ _);
+ pose (IHkp := fun p => IHk p (refl_equal m));
+ simpl in IHkp.
+ case b; case b0;
+ destruct nv as [nv|]; simpl; try auto using getR_singletonR;
+ apply (fun x => eq_trans x (IHkp p));
+ case (setR _ _ _); reflexivity.
 case b;
-simpl.
-apply (fun x => eq_trans x (IHkp p0)).
-simpl.
-case (setR _ _ _); reflexivity.
-apply (fun x => eq_trans x (IHkp p)).
-simpl.
-case (setR _ _ _); reflexivity.
+ [apply (fun x => eq_trans x (IHkp p0))
+ |apply (fun x => eq_trans x (IHkp p))
+ ]; simpl; case (setR _ _ _); reflexivity.
+Qed.
 
-simpl.
-reflexivity.
+Lemma setR_singletonR : forall n (k : Bvector n) nv1 nv2, setR k (singletonR k nv1) nv2 = option_map (singletonR k) nv2.
+Proof.
+intros n k nv1 nv2.
+induction k as [|b m k].
+ reflexivity.
+case b; simpl; rewrite IHk; destruct nv2; reflexivity.
+Qed.
 
-
-simpl.
-set p1 := (Arm
-
-Focus 3.
-simpl.
-destruct nv as [nv|];[|reflexivity].
-simpl.
-case b; simpl.
-rewrite <- (IHk None (refl_equal m)).
-simpl.
-simpl.
-unfold set.
-simpl.
-
-simpl.
-
-Focus 2.
-simpl.
-  case b; case b0; simpl.
-  destruct nv as [nv|]; simpl.
-Focus 2.
-simpl.
-
- intros [t|];[dependent inversion t|];
-  (apply K_dec_set;[intros x y; decide equality|]).
-  destruct nv; try reflexivity.
-
-
+(*
+Lemma lens3 : forall n (k : Bvector n) ot nv1 nv2, set k (set k ot nv1) nv2 = set k ot nv2.
 *)
 (* Note: the merkle hashing of the patricia tree should hash the keys with the values.
          In the case that they key is the hash of the value, then the key will be the hash of the value, so need not be included 
