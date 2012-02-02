@@ -172,9 +172,38 @@ induction k as [|b m k].
 case b; simpl; rewrite IHk; destruct nv2; reflexivity.
 Qed.
 
-(*
 Lemma lens3 : forall n (k : Bvector n) ot nv1 nv2, set k (set k ot nv1) nv2 = set k ot nv2.
-*)
+Proof.
+intros n k [t|] nv1 nv2; simpl;
+ [|destruct nv1 as [nv1|]; simpl; auto using setR_singletonR].
+change t with (eq_rec n PatriciaTrieR t n (eq_refl n)).
+generalize (eq_refl n).
+set (a:=n).
+unfold a at 1 6 9.
+revert t.
+induction k as [|b m k].
+ intros t;dependent inversion t.
+ (apply K_dec_set;[intros x y; decide equality|]).
+ destruct nv1; reflexivity.
+intros t;dependent inversion t;
+ (apply K_dec_set;[intros x y; decide equality|]);
+ simpl (eq_rec _ _ _ _ _);
+ pose (IHkp := fun p => IHk p (refl_equal m));
+ simpl in IHkp.
+ case b; case b0;
+  destruct nv2 as [nv2|]; simpl;
+ try solve
+ [rewrite setR_singletonR; auto
+ |try (rewrite <- IHkp;
+  case (setR _ _ _); reflexivity)
+ ];destruct nv1 as [nv1|];
+ simpl; try reflexivity;
+ (rewrite setR_singletonR; auto).
+case b; simpl; rewrite <- IHkp;
+ simpl; case (setR _ _ _); try reflexivity;
+ destruct nv2 as [nv2|];reflexivity.
+Qed.
+
 (* Note: the merkle hashing of the patricia tree should hash the keys with the values.
          In the case that they key is the hash of the value, then the key will be the hash of the value, so need not be included 
 *)
