@@ -223,169 +223,160 @@ case b;
  ]; simpl; case (setR _ _ _); reflexivity.
 Qed.
 
-Lemma setR_singletonR : forall n (k : Bvector n) nv1 nv2, setR k (singletonR k nv1) nv2 = option_map (singletonR k) nv2.
+Lemma getR_singletonR_indep : forall n (k1 k2 : Bvector n) nv, k1 <> k2 -> getR k1 (singletonR k2 nv) = None.
 Proof.
-intros n k nv1 nv2.
-induction k as [|b m k].
- reflexivity.
-case b; simpl; rewrite IHk; destruct nv2; reflexivity.
+set (P := fun n (k1 k2 : Bvector n) => forall nv : A,
+  k1 <> k2 -> getR k1 (singletonR k2 nv) = None).
+apply (vector_rect2 (A:=bool) (P:=P)).
+ intros nv.
+ congruence.
+unfold P; simpl.
+intros b1 b2.
+apply bCompare_elim; try reflexivity.
+intros b n k1 k2 IH nv Hk.
+apply IH.
+congruence.
+Qed.
+
+Lemma get_indep : forall n (k1 k2 : Bvector n) ot nv, k1 <> k2 -> get k1 (set k2 ot nv) = get k1 ot.
+Proof.
+set (P := fun n (k1 k2 : Bvector n) => forall ot nv,
+  k1 <> k2 -> get k1 (set k2 ot nv) = get k1 ot).
+apply (vector_rect2 (A:=bool) (P:=P)); unfold P.
+ congruence.
+intros b1 b2 n k1 k2 IH [t|] nv Hk;
+ [|destruct nv as [nv|]; simpl;
+  [revert Hk; apply bCompare_elim|];
+  try (intros b Hk; apply getR_singletonR_indep);
+  congruence].
+change t with (eq_rec (S n) PatriciaTrieR t (S n) (eq_refl (S n))).
+generalize (eq_refl (S n)).
+set (a:=(S n)).
+unfold a at 1 6 10.
+dependent inversion t;
+ intros E; elim E using K_dec_set; try decide equality;
+ simpl (eq_rec _ _ _ _ _).
+ revert Hk.
+ simpl.
+ apply bCompare_elim.
+   intros b0.
+   apply bCompare_elim.
+     intros b3 Hk.
+     assert (IHp := (IH (Some p) nv)).
+     simpl in IHp.
+     rewrite <- IHp by congruence.
+     destruct (setR k2 p nv);
+      [simpl; rewrite bCompare_refl|]; reflexivity.
+    destruct (setR k2 p nv); reflexivity.
+   destruct (setR k2 p nv); reflexivity.
+  destruct b1;
+   destruct nv; try reflexivity.
+  intros Hk.
+  apply getR_singletonR_indep.
+  congruence.
+ destruct b1;
+  destruct nv; try reflexivity.
+ intros Hk.
+ apply getR_singletonR_indep.
+ congruence.
+unfold set.
+destruct b1.
+ assert (IHp0 := (IH (Some p0) nv)).
+ simpl in IHp0.
+ destruct b2; simpl.
+  rewrite <- IHp0 by congruence.
+  destruct (setR k2 p0 nv); reflexivity.
+ destruct (setR k2 p nv); reflexivity.
+assert (IHp := (IH (Some p) nv)).
+simpl in IHp.
+destruct b2; simpl.
+ destruct (setR k2 p0 nv); reflexivity.
+rewrite <- IHp by congruence.
+destruct (setR k2 p nv); reflexivity.
+Qed.
+
+Lemma trieR_nonempty : forall n (t : PatriciaTrieR n), {p : (Bvector n*A) | getR (fst p) t = Some (snd p)}.
+Proof.
+intros n t.
+induction t.
+  exists (pair (Vnil _) a).
+  reflexivity.
+ destruct IHt as [[k a] IHt].
+ exists (pair (Vcons _ b _ k) a).
+ simpl; rewrite bCompare_refl.
+ assumption.
+destruct IHt1 as [[k a] IHt].
+exists (pair (Vcons _ false _ k) a).
+assumption.
+Qed.
+
+Lemma trie_ext : forall n (ot1 ot2 : PatriciaTrie n), (forall k, get k ot1 = get k ot2) -> ot1 = ot2.
+Proof.
+assert (L1 : forall n (t : PatriciaTrieR n), ~(forall k : Bvector n, getR k t = None)).
+ intros n t H.
+ destruct (trieR_nonempty t) as [[k a] Hk].
+ rewrite H in Hk.
+ discriminate.
+intros n [t1|] [t2|] Hot;
+ [|elim (L1 _ t1)|elim (L1 _ t2);symmetry|reflexivity]; try firstorder.
+apply f_equal.
+revert Hot. 
+change t2 with (eq_rec n PatriciaTrieR t2 n (eq_refl n)).
+generalize (eq_refl n).
+set (a:=n).
+unfold a at 1 8 11.
+revert t2.
+induction t1; dependent inversion_clear t2;
+(intros E; elim E using K_dec_set; try decide equality; simpl; intros Hot).
+    generalize (Hot (Vnil _)); simpl; congruence.
+   generalize (fun (k : Bvector n) => Hot (Vcons _ b _ k)).
+   simpl.
+   rewrite bCompare_refl.
+   apply bCompare_elim; try (intros Hot'; elim (L1 _ t1); congruence).
+   intros b1 Hot'.
+   apply f_equal.
+   apply (IHt1 p (refl_equal n)).
+   assumption.
+  elim (L1 _ (if b then p else p0)).
+  intros k.
+  generalize (Hot (Vcons _ (negb b) _ k)).
+  case b; simpl; congruence.
+ elim (L1 _ (if b then t1_1 else t1_2)).
+ intros k.
+ generalize (Hot (Vcons _ (negb b) _ k)).
+ case b; simpl; congruence.
+apply f_equal2.
+ apply (IHt1_1 _ (refl_equal n)).
+ intros k; apply (Hot (Vcons _ false _ k)).
+apply (IHt1_2 _ (refl_equal n)).
+intros k; apply (Hot (Vcons _ true _ k)).
 Qed.
 
 Lemma lens3 : forall n (k : Bvector n) ot nv1 nv2, set k (set k ot nv1) nv2 = set k ot nv2.
 Proof.
-intros n k [t|] nv1 nv2; simpl;
- [|destruct nv1 as [nv1|]; simpl; auto using setR_singletonR].
-change t with (eq_rec n PatriciaTrieR t n (eq_refl n)).
-generalize (eq_refl n).
-set (a:=n).
-unfold a at 1 6 9.
-revert t.
-induction k as [|b m k].
- intros t;dependent inversion t.
- (apply K_dec_set;[intros x y; decide equality|]).
- destruct nv1; reflexivity.
-intros t;dependent inversion t;
- (apply K_dec_set;[intros x y; decide equality|]);
- simpl (eq_rec _ _ _ _ _);
- pose (IHkp := fun p => IHk p (refl_equal m));
- simpl in IHkp.
- case b; case b0;
-  destruct nv2 as [nv2|]; simpl;
- try solve
- [rewrite <- IHkp;
-  case (setR _ _ _); reflexivity
- |destruct nv1 as [nv1|];
-  simpl; try reflexivity;
-  (rewrite setR_singletonR; auto)
- ].
-case b; simpl; rewrite <- IHkp;
- simpl; case (setR _ _ _); try reflexivity;
- destruct nv2 as [nv2|];reflexivity.
+intros n k ot nv1 nv2.
+apply trie_ext.
+intros k'.
+case (vector_dec bool_dec k k').
+ intros eq; rewrite <- eq; clear eq k'.
+ rewrite !lens2; reflexivity.
+intros Hk.
+rewrite !get_indep; congruence.
 Qed.
 
-Lemma singleton_indep : forall n  (k1 k2 : Bvector n) nv1 nv2, k1 <> k2 ->
- set k2 (singleton k1 nv1) nv2 = set k1 (singleton k2 nv2) nv1.
-Proof.
-set (P := fun n (k1 k2 : Bvector n) => forall nv1 nv2, k1 <> k2 ->
- set k2 (singleton k1 nv1) nv2 = set k1 (singleton k2 nv2) nv1).
-apply (vector_rect2 (A:=bool) (P:=P)).
- intros nv1 nv2 H.
- elim H.
- reflexivity.
-intros b1 b2 n k1 k2 IH nv1 nv2.
-assert (bool_dec : forall b1 b2 : bool, {b1 = b2} + {b1 <> b2}).
- decide equality.
-case (vector_dec bool_dec k1 k2).
- intros Hk; rewrite Hk.
- case (bool_dec b1 b2).
- intros Hb; rewrite Hb.
-  intros H; elim H; reflexivity.
- intros Hb _.
- destruct nv1 as [nv1|]; destruct nv2 as [nv2|]; simpl; try reflexivity.
-   rewrite bCompare_CompOpp.
-   destruct b1 b2 (bCompare b1 b2) using bCompare_elim; try reflexivity.
-   elim Hb; reflexivity.
-  destruct b1 b2 (bCompare b1 b2) using bCompare_elim; try reflexivity.
-  elim Hb; reflexivity.
- destruct b1 b2 (bCompare b1 b2) using bCompare_elim; try reflexivity.
- elim Hb; reflexivity.
-intros Hk _.
-pose (IH0 := IH nv1 nv2 Hk).
-destruct nv1 as [nv1|]; destruct nv2 as [nv2|]; simpl; try reflexivity.
-  rewrite bCompare_CompOpp.
-  destruct b1 b2 (bCompare b1 b2) using bCompare_elim; try reflexivity.
-  simpl in IH0; simpl; rewrite IH0; reflexivity.
- case (bCompare b2 b1); try reflexivity.
- simpl in IH0; simpl; rewrite IH0; reflexivity.
-case (bCompare b1 b2); try reflexivity.
-simpl in IH0; simpl; rewrite <- IH0; reflexivity.
-Qed.
-
-Lemma lens_indep : forall n (k1 k2 : Bvector n) ot nv1 nv2, k1 <> k2 ->
+Lemma set_indep : forall n (k1 k2 : Bvector n) ot nv1 nv2, k1 <> k2 ->
  set k2 (set k1 ot nv1) nv2 = set k1 (set k2 ot nv2) nv1.
 Proof.
-intros n k1 k2 [t|];[simpl|apply singleton_indep].
-revert n k1 k2 t.
-set (P := fun n k1 k2 => forall (t : PatriciaTrieR n)
-  (nv1 nv2 : option A),
-  k1 <> k2 -> set k2 (setR k1 t nv1) nv2 = set k1 (setR k2 t nv2) nv1).
-apply (vector_rect2 (A:=bool) (P:=P)).
- intros ot n1 n2 H.
- elim H.
- reflexivity.
-intros b1 b2 n k1 k2 IH t.
-compare b1 b2.
- intros Hb.
- rewrite Hb.
- assert (bool_dec : forall b1 b2 : bool, {b1 = b2} + {b1 <> b2}).
-  decide equality.
- case (vector_dec bool_dec k1 k2).
-  intros Hk nv1 nv2.
-  rewrite Hk.
-  intros H.
-  elim H.
-  reflexivity.
- intros H nv1 nv2 _.
- change t with (eq_rec (S n) PatriciaTrieR t (S n) (eq_refl (S n))).
-  generalize (eq_refl (S n)).
- set (a:=(S n)).
- unfold a at 1 6 10.
- dependent inversion t;
-  (apply K_dec_set;[intros x y; decide equality|]);
-  simpl (eq_rec _ _ _ _ _).
-  simpl.
-  apply bCompare_elim.
-    intros b0.
-    generalize (IH p nv1 nv2 H).
-    case (setR k1 p nv1); case (setR k2 p nv2); simpl.
-       intros p0 p1 Hset.
-       rewrite bCompare_refl.
-       congruence.
-      intros p0 Hset.
-      rewrite bCompare_refl, Hset.
-      destruct nv1; reflexivity.
-     intros p0 Hset.
-     rewrite bCompare_refl, <- Hset.
-     destruct nv2; reflexivity.
-    destruct nv1; destruct nv2; simpl; solve[ discriminate | congruence].
-   generalize (singleton_indep nv1 nv2 H).
-   destruct nv1; destruct nv2; simpl; try reflexivity;
-      intros Hset; (rewrite Hset || rewrite <- Hset); reflexivity.
-  generalize (singleton_indep nv1 nv2 H).
-  destruct nv1; destruct nv2; simpl; try reflexivity;
-     intros Hset; (rewrite Hset || rewrite <- Hset); reflexivity.
- case b2;[set (p2 := p0)|set (p2 := p)];
-  (generalize (IH p2 nv1 nv2 H); simpl (setR _ _ _);
-   destruct (setR k1 p2 nv1); destruct (setR k2 p2 nv2); simpl; intros Hset;
-   [rewrite Hset; reflexivity
-   |rewrite Hset; destruct nv1; reflexivity
-   |rewrite <- Hset; destruct nv2; reflexivity
-   |destruct nv1; destruct nv2; try discriminate; try reflexivity;
-    injection Hset; congruence]).
-intros Hb nv1 nv2 _.
-replace b2 with (negb b1) by
- (destruct b1; destruct b2; try solve[reflexivity|elim Hb; reflexivity]).
-clear b2 Hb.
-change t with (eq_rec (S n) PatriciaTrieR t (S n) (eq_refl (S n))).
- generalize (eq_refl (S n)).
-set (a:=(S n)).
-unfold a at 1 6 10.
-dependent inversion t;
- (apply K_dec_set;[intros x y; decide equality|]);
- simpl (eq_rec _ _ _ _ _).
- simpl.
- apply bCompare_elim.
-   intros [|];
-    destruct nv2; simpl; destruct (setR k1 p nv1); reflexivity.
-  destruct nv1; simpl; destruct (setR k2 p nv2); reflexivity.
- destruct nv1; simpl; destruct (setR k2 p nv2); reflexivity.
-case b1; simpl.
- case_eq (setR k1 p0 nv1); [intros p2|]; intros Hset;
-  destruct (setR k2 p nv2);
-   rewrite Hset; reflexivity.
-case_eq (setR k1 p nv1); [intros p2|]; intros Hset;
- destruct (setR k2 p0 nv2);
-  rewrite Hset; reflexivity.
+intros n k1 k2 ot nv1 nv2 Hk.
+apply trie_ext.
+intros k3.
+case (vector_dec bool_dec k3 k2); intros Hk'.
+ rewrite Hk'; clear k3 Hk'.
+ rewrite lens2, get_indep, lens2; congruence.
+case (vector_dec bool_dec k3 k1); intros Hk''.
+ rewrite Hk''; clear k3 Hk' Hk''.
+ rewrite lens2, get_indep, lens2; congruence.
+rewrite !get_indep; congruence.
 Qed.
 
 (* Note: the merkle hashing of the patricia tree should hash the keys with the values.
