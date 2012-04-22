@@ -48,13 +48,13 @@
   likely to be found during each trial. Typically the fraction <math|f> is
   small enough that the ``law of rare events'' holds and the generation of
   blocks is well approximated by a Poisson process at a rate of
-  <math|<frac|\<lambda\>|f>> (to-do: formalize this claim). The probability
-  of <math|k> blocks taking time <math|\<tau\>> to find, given a hash rate of
+  <math|\<lambda\>f> (to-do: formalize this claim). The probability of
+  <math|k> blocks taking time <math|\<tau\>> to find, given a hash rate of
   <math|\<lambda\>> and hence a block rate of <math|\<lambda\>f>, is a gamma
   distribution.
 
   <\equation*>
-    p<around*|(|period=\<tau\>\|k,\<lambda\>|)>=\<gamma\><around*|(|\<tau\>;k;\<lambda\>f|)>=<frac|<around*|(|\<lambda\>*f|)><rsup|k>\<tau\><rsup|k-1>e<rsup|-\<lambda\>f*\<tau\>>|\<Gamma\><around*|(|k|)>>.
+    p<around*|(|period=\<tau\>\|k,\<lambda\>|)>=\<Gamma\><around*|(|\<tau\>;k,\<lambda\>f|)>=<frac|<around*|(|\<lambda\>*f|)><rsup|k>\<tau\><rsup|k-1>e<rsup|-\<lambda\>f*\<tau\>>|\<Gamma\><around*|(|k|)>>.
   </equation*>
 
   By Bayes's rule, the probability of the hash rate being <math|\<lambda\>>
@@ -63,7 +63,7 @@
 
   <\folded-std>
     <\equation*>
-      p<around*|(|hash rate = \<lambda\>\|k,\<tau\>,I|)>=\<gamma\><around*|(|\<lambda\>;k,\<tau\>f|)>=<frac|<around*|(|\<tau\>f|)><rsup|k>\<lambda\><rsup|k-1>e<rsup|-\<tau\>*f\<lambda\>>|\<Gamma\><around*|(|k|)>>.
+      p<around*|(|hash rate = \<lambda\>\|k,\<tau\>,I|)>=\<Gamma\><around*|(|\<lambda\>;k,\<tau\>f|)>=<frac|<around*|(|\<tau\>f|)><rsup|k>\<lambda\><rsup|k-1>e<rsup|-\<tau\>*f\<lambda\>>|\<Gamma\><around*|(|k|)>>.
     </equation*>
   <|folded-std>
     <\proof>
@@ -74,7 +74,7 @@
         \<lambda\>\|k,\<tau\>,I|)>>|<cell|=>|<cell|<frac|p<around*|(|peroid =
         \<tau\>\|k,\<lambda\>|)>|p<around*|(|period=\<tau\>\|k,I|)>>p<around*|(|hashrate
         = \<lambda\>\|k,I|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<frac|<around*|(|\<lambda\>*f|)><rsup|k>\<tau\><rsup|k-1>e<rsup|-\<lambda\>f*\<tau\>>|\<Gamma\><around*|(|k|)>>|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>>p<around*|(|period=\<tau\>\|k,\<alpha\>|)>p<around*|(|hashrate
-        = \<alpha\>\|I|)>\<mathd\>\<alpha\>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<frac|<around*|(|\<lambda\>*f|)><rsup|k>\<tau\><rsup|k-1>e<rsup|-\<lambda\>*f\<tau\>>|\<Gamma\><around*|(|k|)>>|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>><frac|<around*|(|\<alpha\>f*|)><rsup|k>\<tau\><rsup|k-1>e<rsup|-\<alpha\>f*\<tau\>>|\<Gamma\><around*|(|k|)>><frac|1|\<alpha\>>\<mathd\>\<alpha\>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|\<lambda\>f|)><rsup|k>e<rsup|-\<lambda\>f\<tau\>>|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>><around*|(|\<alpha\>f|)><rsup|k>e<rsup|-\<alpha\>f\<tau\>><frac|1|\<alpha\>f\<tau\>>\<mathd\><around*|(|\<alpha\>f\<tau\>|)>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|\<lambda\>f\<tau\>|)><rsup|k>e<rsup|-\<lambda\>f\<tau\>>*|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>><around*|(|\<alpha\>f\<tau\>|)><rsup|k>e<rsup|-\<alpha\>f\<tau\>><frac|1|\<alpha\>f*\<tau\>>\<mathd\><around*|(|\<alpha\>f\<tau\>|)>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|\<lambda\>f\<tau\>|)><rsup|k>e<rsup|-\<lambda\>f\<tau\>>|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>><around*|(|\<alpha\>*f\<tau\>|)><rsup|k-1>e<rsup|-\<alpha\>f\<tau\>>\<mathd\><around*|(|\<alpha\>f\<tau\>|)>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|\<lambda\>f\<tau\>|)><rsup|k>e<rsup|-\<lambda\>f\<tau\>>|\<Gamma\><around*|(|k|)>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|f\<tau\>|)><rsup|k>\<lambda\><rsup|k-1>e<rsup|-<frac|\<lambda\>\<tau\>|f>>|\<Gamma\><around*|(|k|)>>>>>>
+        = \<alpha\>\|I|)>\<mathd\>\<alpha\>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<frac|<around*|(|\<lambda\>*f|)><rsup|k>\<tau\><rsup|k-1>e<rsup|-\<lambda\>*f\<tau\>>|\<Gamma\><around*|(|k|)>>|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>><frac|<around*|(|\<alpha\>f*|)><rsup|k>\<tau\><rsup|k-1>e<rsup|-\<alpha\>f*\<tau\>>|\<Gamma\><around*|(|k|)>><frac|1|\<alpha\>>\<mathd\>\<alpha\>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|\<lambda\>f|)><rsup|k>e<rsup|-\<lambda\>f\<tau\>>|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>><around*|(|\<alpha\>f|)><rsup|k>e<rsup|-\<alpha\>f\<tau\>><frac|1|\<alpha\>f\<tau\>>\<mathd\><around*|(|\<alpha\>f\<tau\>|)>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|\<lambda\>f\<tau\>|)><rsup|k>e<rsup|-\<lambda\>f\<tau\>>*|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>><around*|(|\<alpha\>f\<tau\>|)><rsup|k>e<rsup|-\<alpha\>f\<tau\>><frac|1|\<alpha\>f*\<tau\>>\<mathd\><around*|(|\<alpha\>f\<tau\>|)>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|\<lambda\>f\<tau\>|)><rsup|k>e<rsup|-\<lambda\>f\<tau\>>|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>><around*|(|\<alpha\>*f\<tau\>|)><rsup|k-1>e<rsup|-\<alpha\>f\<tau\>>\<mathd\><around*|(|\<alpha\>f\<tau\>|)>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|\<lambda\>f\<tau\>|)><rsup|k>e<rsup|-\<lambda\>f\<tau\>>|\<Gamma\><around*|(|k|)>><around*|(|<frac|1|\<lambda\>>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|f\<tau\>|)><rsup|k>\<lambda\><rsup|k-1>e<rsup|-\<lambda\>f\<tau\>>|\<Gamma\><around*|(|k|)>>>>>>
       </eqnarray*>
     </proof>
   </folded-std>
@@ -224,6 +224,99 @@
 
   if we want the expected time per block to be 600s, or if we want to
   minimize the expected square error of the time per block.
+
+  <subsection|Per Block Difficulty Adjustments>
+
+  In this section, we will consider a modified Bitcoin protocol where
+  difficulty adjustments are made after each block. \ We will still assume
+  that the networking hash rate remains constant, an assumption that we will
+  weaken in the next section.
+
+  As before we will use the improper, non-informative Jeffery's for the proir
+  hash rate distribution.
+
+  <\equation*>
+    p<around*|(|hash rate = \<lambda\><around*|\||I|\<nobracket\>>|)>=<frac|1|\<lambda\>>.
+  </equation*>
+
+  Instead of the target <math|f\<in\><around*|[|0,1|]>> being a known
+  constant, it will vary (but still be known) for each block. We denote the
+  target for the <math|i>th block by <math|f<rsub|i>\<in\><around*|[|0,1|]>>.
+
+  The probability of the hash rate rate being <math|\<lambda\>> after
+  observing <math|n> blocks given that the <math|i<rsup|th>> block takes time
+  <math|\<tau\><rsub|i>> is
+
+  <\folded>
+    <\equation*>
+      <with|mode|math|p<around*|(|hash rate =
+      \<lambda\>\|\<tau\><rsub|n-1>,\<ldots\>,\<tau\><rsub|0>,I|)>=<frac|<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n>\<lambda\><rsup|n-1>e<rsup|-\<lambda\><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>>|\<Gamma\><around*|(|n|)>>>
+    </equation*>
+  <|folded>
+    <\proof>
+      For <math|n=1> we have that\ 
+
+      <\equation*>
+        <with|mode|math|p<around*|(|hash rate =
+        \<lambda\>\|\<tau\><rsub|0>,I|)>=f<rsub|0>\<tau\><rsub|0>e<rsup|-\<lambda\>f<rsub|0>\<tau\><rsub|0>>>
+      </equation*>
+
+      from the previous section.
+
+      Suppose, by induction, <with|mode|math|p<around*|(|hash rate =
+      \<lambda\>\|\<tau\><rsub|n-1>,\<ldots\>,\<tau\><rsub|0>,I|)>=<frac|<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n>\<lambda\><rsup|n-1>e<rsup|-\<lambda\><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>>|\<Gamma\><around*|(|n|)>>>
+
+      <\eqnarray*>
+        <tformat|<table|<row|<cell|p<around*|(|hash rate =
+        \<lambda\>\|\<tau\><rsub|n>,\<ldots\>,\<tau\><rsub|0>,I|)>>|<cell|=>|<cell|<frac|p<around*|(|\<tau\><rsub|1>\|\<lambda\>,\<tau\><rsub|n-1>,\<ldots\>,\<tau\><rsub|0>,I|)>*p<around*|(|\<lambda\>\|\<tau\><rsub|n>,\<ldots\>,\<tau\><rsub|0>,I|)>|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>p<around*|(|\<tau\><rsub|1>\|<wide|\<lambda\>|~>,\<tau\><rsub|n-1>,\<ldots\>,\<tau\><rsub|0>,I|)>*p<around*|(|<wide|\<lambda\>|~>\|\<tau\><rsub|n>,\<ldots\>,\<tau\><rsub|0>,I|)>\<mathd\><wide|\<lambda\>|~>>>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|<around*|(|\<lambda\>*f<rsub|n>|)>e<rsup|-\<lambda\>f<rsub|n>*\<tau\><rsub|n>>|)>*<around*|(|<frac|<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>\<lambda\><rsup|n-1>e<rsup|-\<lambda\><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>>|\<Gamma\><around*|(|
+        n|)>>|)>|<big-around|\<int\>|<rsup|\<infty\>><rsub|0><around*|(|<around*|(|<wide|\<lambda\>|~>*f<rsub|n>|)>e<rsup|-<wide|\<lambda\>|~>f<rsub|n>*\<tau\><rsub|n>>|)>*<around*|(|<frac|<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><wide|\<lambda\>|~><rsup|n-1>e<rsup|-<wide|\<lambda\>|~><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>>|\<Gamma\><around*|(|n|)>>|)>\<mathd\><wide|\<lambda\>|~>>>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|\<lambda\>*e<rsup|-\<lambda\>f<rsub|n>*\<tau\><rsub|n>>|)>*<around*|(|\<lambda\><rsup|n-1>e<rsup|-\<lambda\><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>>|)>|<big-around|\<int\>|<rsup|\<infty\>><rsub|0><around*|(|<wide|\<lambda\>|~>*e<rsup|-<wide|\<lambda\>|~>f<rsub|n>*\<tau\><rsub|n>>|)>*<around*|(|<wide|\<lambda\>|~><rsup|n-1>e<rsup|-<wide|\<lambda\>|~><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>>|)>\<mathd\><wide|\<lambda\>|~>>>>>|<row|<cell|>|<cell|=>|<cell|<frac|\<lambda\><rsup|n>*e<rsup|-\<lambda\><around*|(|<below|\<Sigma\>|i\<less\>n+1>f<rsub|i>\<tau\><rsub|i>|)>>|<big-around|\<int\>|<rsup|\<infty\>><rsub|0><wide|\<lambda\>|~><rsup|n>*e<rsup|-<wide|\<lambda\>|~><around*|(|<below|\<Sigma\>|i\<less\>n+1>f<rsub|i>\<tau\><rsub|i>|)>>\<mathd\><wide|\<lambda\>|~>>>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|<below|\<Sigma\>|i\<less\>n+1>f<rsub|i>\<tau\><rsub|i>|)><rsup|n+1>\<lambda\><rsup|n>*e<rsup|-\<lambda\><around*|(|<below|\<Sigma\>|i\<less\>n+1>f<rsub|i>\<tau\><rsub|i>|)>>|<big-around|\<int\>|<rsup|\<infty\>><rsub|0><around*|(|<wide|\<lambda\>|~><around*|(|<below|\<Sigma\>|i\<less\>n+1>f<rsub|i>\<tau\><rsub|i>|)>|)><rsup|n>*e<rsup|-<wide|\<lambda\>|~><around*|(|<below|\<Sigma\>|i\<less\>n+1>f<rsub|i>\<tau\><rsub|i>|)>>\<mathd\><around*|[|<wide|\<lambda\>|~><around*|(|<below|\<Sigma\>|i\<less\>n+1>f<rsub|i>\<tau\><rsub|i>|)>|]>>>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|<below|\<Sigma\>|i\<less\>n+1>f<rsub|i>\<tau\><rsub|i>|)><rsup|n+1>\<lambda\><rsup|n>*e<rsup|-\<lambda\><around*|(|<below|\<Sigma\>|i\<less\>n+1>f<rsub|i>\<tau\><rsub|i>|)>>|\<Gamma\><around*|(|n+1|)>>>>>>
+      </eqnarray*>
+    </proof>
+  </folded>
+
+  Now we proceed as before. \ We want to set a new target, <math|f<rprime|'>>
+  to control the expected time for the next block, <math|t>. \ Given we set a
+  new rate of <math|f<rprime|'>> the expected time for the next block is
+
+  <\folded-std>
+    <\equation*>
+      p<around*|(|period<rprime|'>=t\|\<tau\><rsub|n-1>,\<ldots\>,\<tau\><rsub|0>,I|)>=<frac|n*f<rprime|'><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n>|<around*|(|t*f<rprime|'>+<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n+1>>
+    </equation*>
+  <|folded-std>
+    <\proof>
+      \;
+
+      <\eqnarray*>
+        <tformat|<table|<row|<cell|p<around*|(|period<rprime|'>=t\|\<tau\><rsub|n-1>,\<ldots\>,\<tau\><rsub|0>,I|)>>|<cell|=>|<cell|>>|<row|<cell|<big-around|\<int\>|<rsup|\<infty\>><rsub|0>>p<around*|(|period<rprime|'>=t<around*|\||\<lambda\>|\<nobracket\>>|)>p<around*|(|hashrate=\<lambda\>\|\<tau\><rsub|n-1>,\<ldots\>\<tau\><rsub|0>,I|)>\<mathd\>\<lambda\>>|<cell|=>|<cell|>>|<row|<cell|<big-around|\<int\>|<rsup|\<infty\>><rsub|0>><around*|(|\<lambda\>f<rprime|'>|)>e<rsup|-t\<lambda\>f<rprime|'>><frac|<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n>\<lambda\><rsup|n-1>e<rsup|-\<lambda\><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>>|\<Gamma\><around*|(|n|)>>\<mathd\>\<lambda\>>|<cell|=>|<cell|>>|<row|<cell|<frac|f<rprime|'><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n>|\<Gamma\><around*|(|n|)>><big-around|\<int\>|<rsup|\<infty\>><rsub|0>><rsup|>\<lambda\><rsup|n>e<rsup|\<um\>\<lambda\><around*|(|t*f<rprime|'>+<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>>\<mathd\>\<lambda\>>|<cell|=>|<cell|>>|<row|<cell|<frac|f<rprime|'><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n>|\<Gamma\><around*|(|n|)><around*|(|t*f<rprime|'>+<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n+1>><big-around|\<int\>|<rsup|\<infty\>><rsub|0>><rsup|><around*|(|\<lambda\><around*|(|t*f<rprime|'>+<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>|)><rsup|n>e<rsup|\<um\>\<lambda\><around*|(|t*f<rprime|'>+<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>>\<mathd\><around*|[|\<lambda\><around*|(|t*f<rprime|'>+<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)>|]>>|<cell|=>|<cell|>>|<row|<cell|<frac|f<rprime|'><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n>\<Gamma\><around*|(|n+1|)>|\<Gamma\><around*|(|n|)><around*|(|t*f<rprime|'>+<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n+1>>>|<cell|=>|<cell|>>|<row|<cell|<frac|n*f<rprime|'><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n>|<around*|(|t*f<rprime|'>+<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n+1>>>|<cell|>|<cell|>>>>
+      </eqnarray*>
+    </proof>
+  </folded-std>
+
+  As before, in order to pick a value of <math|f<rprime|'>> that minimized
+  the expected squared error of <math|t> we pick <math|f<rprime|'>> so that
+  the expected value of <math|t> is 600s.
+
+  <\folded-std>
+    <\equation*>
+      \<Epsilon\><around*|[|t|]>=<frac|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i><rsup|>|f<rprime|'><around*|(|n-1|)>>
+      = 600<with|mode|text|s>.
+    </equation*>
+  <|folded-std>
+    <\proof>
+      \;
+
+      <\eqnarray*>
+        <tformat|<table|<row|<cell|\<Epsilon\><around*|[|t|]>>|<cell|=>|<cell|<big-around|\<int\>|<rsub|0><rsup|\<infty\>>p<around*|(|period<rprime|'>=t\|\<tau\><rsub|n-1>,\<ldots\>,\<tau\><rsub|0>I|)>>t\<mathd\>t>>|<row|<cell|>|<cell|=>|<cell|<big-around|\<int\>|<rsub|0><rsup|\<infty\>><frac|n*f<rprime|'><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n>t|<around*|(|t*f<rprime|'>+<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n+1>>\<mathd\>t>>>|<row|<cell|>|<cell|=>|<cell|n<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n><big-around|\<int\>|<rsub|0><rsup|\<infty\>><frac|<around*|(|t*f<rprime|'>*|)>|<around*|(|*t*f<rprime|'>+<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|n+1>>\<mathd\>t>>>|<row|<cell|>|<cell|=>|<cell|<frac|n|f<rprime|'><around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|>><big-around|\<int\>|<rsub|0><rsup|\<infty\>><frac|<around*|(|t*f<rprime|'>|)>|<around*|(|<frac|t*f<rprime|'>*|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>>+1|)><rsup|n+1>>\<mathd\><around*|(|t*f*<rprime|'>|)>>>>|<row|<cell|>|<cell|=>|<cell|<frac|n<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|>|f<rprime|'>><big-around|\<int\>|<rsub|0><rsup|\<infty\>><frac|<around*|(|<frac|t*f<rprime|'>|<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|>>|)>|<around*|(|<frac|t*f<rprime|'>*|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>>+1|)><rsup|n+1>>\<mathd\><around*|(|<frac|t*f*<rprime|'>|<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|>>|)>>>>|<row|<cell|
+        >|<cell|=>|<cell|<around*|(|<frac|n<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|>|f<rprime|'>>|)><around*|(|<frac|1|<around*|(|n-1|)>n>|)>>>|<row|<cell|>|<cell|=>|<cell|<frac|<around*|(|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|)><rsup|>|f<rprime|'><around*|(|n-1|)>>>>>>
+      </eqnarray*>
+
+      \;
+    </proof>
+  </folded-std>
+
+  <\equation*>
+    f<rprime|'>=<frac|<below|\<Sigma\>|i\<less\>n>f<rsub|i>\<tau\><rsub|i>|<around*|(|n-1|)>600s>
+  </equation*>
 </body>
 
 <\references>
@@ -232,7 +325,7 @@
     <associate|auto-2|<tuple|1.1|1>>
     <associate|auto-3|<tuple|1.2|1>>
     <associate|auto-4|<tuple|1.3|2>>
-    <associate|auto-5|<tuple|1|?>>
+    <associate|auto-5|<tuple|1.4|?>>
   </collection>
 </references>
 
@@ -254,6 +347,10 @@
       <with|par-left|<quote|1.5fn>|Bayesian Solution
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-4>>
+
+      <with|par-left|<quote|1.5fn>|Per Block Difficulty Adjustments
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-5>>
     </associate>
   </collection>
 </auxiliary>
